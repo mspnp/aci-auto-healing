@@ -4,4 +4,4 @@ Sample code using Azure Durable Functions (Monitoring Pattern) to create long ta
 
 This code represent the following flow:
 
-![Diagram](/flow.png)
+![Diagram](./flow.png)
