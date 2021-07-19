@@ -169,7 +169,7 @@ namespace aci_healing_durable
         public static void UpdateAppGW(IAzure azure, string rgName, string appgwName, List<string> goodIP, ILogger log)
         {
             //AppGW Backend Pool Name
-            string bepool = Environment.GetEnvironmentVariable("APP_BEPOOL_NAME");
+            string bepool = Environment.GetEnvironmentVariable("APPGW_BEPOOL_NAME");
             //AppGW Listener Name
             string listener = Environment.GetEnvironmentVariable("APPGW_LISTENER_NAME");
             //APPGW HTTP Setting Name
