@@ -10,7 +10,7 @@
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.DurableTask" Version="2.5.0" />
     <PackageReference Include="Microsoft.Azure.Management.Fluent" Version="1.37.1" />
     <PackageReference Include="Microsoft.Azure.Management.Network.Fluent" Version="1.37.1" />
-    <PackageReference Include="Azure.Identity" Version="1.4.0" />
+    <PackageReference Include="Azure.Identity" Version="1.10.2" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Microsoft.Azure.Management.Network.Fluent" />
