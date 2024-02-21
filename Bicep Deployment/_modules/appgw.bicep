@@ -7,84 +7,85 @@ param backendPool string = 'bepool'
 param backendHttpSetting string = 'behttp-port-80'
 param httpListener string = 'listener-port-80'
 param aciIPList array
+param rgLocation string = resourceGroup().location
 
-resource pip 'Microsoft.Network/publicIPAddresses@2021-02-01' = {
+resource pip 'Microsoft.Network/publicIPAddresses@2023-04-01' = {
   name: '${prefix}-pip'
-  location: resourceGroup().location
-  sku:{
+  location: rgLocation
+  sku: {
     name: 'Standard'
     tier: 'Regional'
   }
-  zones:[
+  zones: [
     '1'
     '2'
     '3'
   ]
-  properties:{
+  properties: {
     publicIPAddressVersion: 'IPv4'
     publicIPAllocationMethod: 'Static'
     idleTimeoutInMinutes: 4
-    dnsSettings:{
+    dnsSettings: {
       domainNameLabel: '${prefix}${uniqueString(resourceGroup().id)}'
     }
   }
 }
 
-resource appgw 'Microsoft.Network/applicationGateways@2021-02-01' = {
+resource appgw 'Microsoft.Network/applicationGateways@2023-04-01' = {
   name: appgwName
-  location: resourceGroup().location
-  zones:[
+  location: rgLocation
+  zones: [
     '1'
     '2'
     '3'
   ]
-  properties:{
-    sku:{
+  properties: {
+    sku: {
       name: 'Standard_v2'
       tier: 'Standard_v2'
       capacity: 2
     }
-    gatewayIPConfigurations:[
+    gatewayIPConfigurations: [
       {
         name: 'appgwGatewayIpConfig'
-        properties:{
-          subnet:{
+        properties: {
+          subnet: {
             id: appgwSubnetId
           }
         }
       }
     ]
-    frontendIPConfigurations:[
+    frontendIPConfigurations: [
       {
         name: frontendIpConfiguration
-        properties:{
+        properties: {
           privateIPAllocationMethod: 'Dynamic'
-          publicIPAddress:{
+          publicIPAddress: {
             id: pip.id
           }
         }
       }
     ]
-    frontendPorts:[
+    frontendPorts: [
       {
         name: frontendPort
-        properties:{
+        properties: {
           port: 80
         }
       }
     ]
-    backendAddressPools:[
+    backendAddressPools: [
       {
         name: backendPool
-        properties:{
+        properties: {
           backendAddresses: aciIPList
         }
       }
     ]
-    backendHttpSettingsCollection:[
+    backendHttpSettingsCollection: [
       {
         name: backendHttpSetting
-        properties:{
+        properties: {
           port: 5000
           protocol: 'Http'
           cookieBasedAffinity: 'Disabled'
@@ -93,33 +94,34 @@ resource appgw 'Microsoft.Network/applicationGateways@2021-02-01' = {
         }
       }
     ]
-    httpListeners:[
+    httpListeners: [
       {
         name: httpListener
-        properties:{
-          frontendIPConfiguration:{
-            id: '${resourceId('Microsoft.Network/applicationGateways', appgwName)}/frontendIPConfigurations/${frontendIpConfiguration}'
+        properties: {
+          frontendIPConfiguration: {
+            id: resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations', appgwName, frontendIpConfiguration)
           }
-          frontendPort:{
-            id: '${resourceId('Microsoft.Network/applicationGateways', appgwName)}/frontendPorts/${frontendPort}'
+          frontendPort: {
+            id: resourceId('Microsoft.Network/applicationGateways/frontendPorts', appgwName, frontendPort)
           }
-          protocol:'Http'
+          protocol: 'Http'
         }
       }
     ]
-    requestRoutingRules:[
+    requestRoutingRules: [
       {
         name: 'rule1'
-        properties:{
+        properties: {
           ruleType: 'Basic'
-          httpListener:{
-            id: '${resourceId('Microsoft.Network/applicationGateways', appgwName)}/httpListeners/${httpListener}'
+          priority: 1
+          httpListener: {
+            id: resourceId('Microsoft.Network/applicationGateways/httpListeners', appgwName, httpListener)
           }
-          backendAddressPool:{
-            id: '${resourceId('Microsoft.Network/applicationGateways', appgwName)}/backendAddressPools/${backendPool}'
+          backendAddressPool: {
+            id: resourceId('Microsoft.Network/applicationGateways/backendAddressPools', appgwName, backendPool)
           }
-          backendHttpSettings:{
-            id: '${resourceId('Microsoft.Network/applicationGateways', appgwName)}/backendHttpSettingsCollection/${backendHttpSetting}'
+          backendHttpSettings: {
+            id: resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', appgwName, backendHttpSetting)
           }
         }
       }

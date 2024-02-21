@@ -1,6 +1,8 @@
-resource cosmosDB 'Microsoft.DocumentDB/databaseAccounts@2021-06-15' = {
+param rgLocation string = resourceGroup().location
+
+resource cosmosDB 'Microsoft.DocumentDB/databaseAccounts@2023-04-15' = {
   name: uniqueString(resourceGroup().id)
-  location: resourceGroup().location
+  location: rgLocation
   kind: 'GlobalDocumentDB'
   properties: {
     publicNetworkAccess: 'Enabled'
@@ -21,9 +23,9 @@ resource cosmosDB 'Microsoft.DocumentDB/databaseAccounts@2021-06-15' = {
     }
     locations: [
       {
-        locationName: resourceGroup().location
+        locationName: rgLocation
         failoverPriority: 0
-        isZoneRedundant: true
+        isZoneRedundant: false
       }
     ]
     cors: []

@@ -1,8 +1,9 @@
 param imageName string = 'hello-world:latest'
+param location string =  resourceGroup().location
 
-resource acr 'Microsoft.ContainerRegistry/registries@2021-06-01-preview' = {
+resource acr 'Microsoft.ContainerRegistry/registries@2023-01-01-preview' = {
   name: uniqueString(resourceGroup().id)
-  location: resourceGroup().location
+  location: location
   sku:{
     name: 'Basic'
   }
@@ -14,7 +15,7 @@ resource acr 'Microsoft.ContainerRegistry/registries@2021-06-01-preview' = {
 resource acrBuildImage 'Microsoft.ContainerRegistry/registries/taskRuns@2019-06-01-preview' = {
   parent: acr
   name: 'hellotask'
-  location: resourceGroup().location
+  location: location
   properties: {
     runRequest: {
       type: 'DockerBuildRequest'
@@ -32,7 +33,6 @@ resource acrBuildImage 'Microsoft.ContainerRegistry/registries/taskRuns@2019-06-
   }
 }
 
-output acrPassword string = acr.listCredentials().passwords[0].value
 output acrServerName string = acr.properties.loginServer
 output acrLoginName string = acr.name
 output container_image string = '${acr.properties.loginServer}/${imageName}'

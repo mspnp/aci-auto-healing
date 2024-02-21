@@ -1,7 +1,7 @@
 param prefix string = 'gt'
 param rgLocation string = resourceGroup().location
 
-resource laworkspace 'microsoft.operationalinsights/workspaces@2021-06-01' = {
+resource laworkspace 'microsoft.operationalinsights/workspaces@2022-10-01' = {
   name: '${prefix}-app-workspace'
   location: rgLocation
   properties: {
