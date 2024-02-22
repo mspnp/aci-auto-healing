@@ -4,7 +4,7 @@ param functionName string
 param functionHttpUrl string
 param healthyThreshold int
 param alertScope array
-param rgLocation string = resourceGroup().location
+param location string = resourceGroup().location
 
 resource actionGroup 'microsoft.insights/actionGroups@2023-01-01'={
   name: '${prefix}-aci-ag'
@@ -56,7 +56,7 @@ resource metricAlerts 'Microsoft.Insights/metricAlerts@2018-03-01' = {
     }
     autoMitigate: true
     targetResourceType: 'Microsoft.Network/applicationGateways'
-    targetResourceRegion: rgLocation
+    targetResourceRegion: location
     actions: [
       {
         actionGroupId: actionGroup.id

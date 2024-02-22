@@ -1,9 +1,9 @@
 param prefix string
-param rgLocation string = resourceGroup().location
+param location string = resourceGroup().location
 
 resource vnet 'Microsoft.Network/virtualNetworks@2023-04-01' = {
   name: '${prefix}-vnet'
-  location: rgLocation
+  location: location
   properties:{
     addressSpace:{
       addressPrefixes: [
@@ -48,7 +48,7 @@ resource privatelinkSubnet 'Microsoft.Network/virtualNetworks/subnets@2023-04-01
 
 resource aciNetworkProfile 'Microsoft.Network/networkProfiles@2023-04-01' = {
   name: '${aciSubnet.name}-network-profile'
-  location: rgLocation
+  location: location
   properties:{
     containerNetworkInterfaceConfigurations:[
       {

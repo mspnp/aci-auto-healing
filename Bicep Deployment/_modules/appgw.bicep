@@ -7,11 +7,11 @@ param backendPool string = 'bepool'
 param backendHttpSetting string = 'behttp-port-80'
 param httpListener string = 'listener-port-80'
 param aciIPList array
-param rgLocation string = resourceGroup().location
+param location string = resourceGroup().location
 
 resource pip 'Microsoft.Network/publicIPAddresses@2023-04-01' = {
   name: '${prefix}-pip'
-  location: rgLocation
+  location: location
   sku: {
     name: 'Standard'
     tier: 'Regional'
@@ -33,7 +33,7 @@ resource pip 'Microsoft.Network/publicIPAddresses@2023-04-01' = {
 
 resource appgw 'Microsoft.Network/applicationGateways@2023-04-01' = {
   name: appgwName
-  location: rgLocation
+  location: location
   zones: [
     '1'
     '2'

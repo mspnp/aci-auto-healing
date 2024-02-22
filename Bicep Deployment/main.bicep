@@ -18,7 +18,7 @@ module vnet '_modules/vnet.bicep' = {
   scope: rg
   params:{
     prefix: deploy_prefix
-    rgLocation: rg_location
+    location: rg_location
   }
 }
 
@@ -27,7 +27,7 @@ module monitoring '_modules/monitor.bicep' = {
   scope: rg
   params:{
     prefix:deploy_prefix
-    rgLocation: rg_location
+    location: rg_location
   }
 }
 
@@ -50,7 +50,7 @@ module aci '_modules/aci.bicep' = {
     acrServerName: acr.outputs.acrServerName
     acrLoginName: acr.outputs.acrLoginName
     containerImage: acr.outputs.container_image
-    rgLocation: rg_location
+    location: rg_location
   }
 }
 
@@ -61,7 +61,7 @@ module appgw '_modules/appgw.bicep' = {
     prefix: deploy_prefix
     appgwSubnetId: vnet.outputs.appgwSubnet
     aciIPList: aci.outputs.aciAddress
-    rgLocation: rg_location
+    location: rg_location
   }
 }
 
@@ -88,7 +88,7 @@ module cosmos '_modules/cosmosdb.bicep'= {
   name: 'azurecosmosdb'
   scope: rg
   params:{
-    rgLocation: rg_location
+    location: rg_location
   }
 }
 
@@ -99,7 +99,7 @@ module privatelink '_modules/privatelink.bicep'={
     privateLinkSubnetId: vnet.outputs.privatelinkSubnet
     vnetId: vnet.outputs.vnetId
     cosmosId: cosmos.outputs.cosmosId
-    rgLocation: rg_location
+    location: rg_location
   }
 }
 
@@ -113,6 +113,6 @@ module alerts '_modules/alerts.bicep'={
     functionHttpUrl: 'https://${functions.outputs.functionUrl}/api/aci_healing_durable_HttpStart'
     healthyThreshold: aci_count - 1
     alertScope: array(appgw.outputs.appGWId)
-    rgLocation: rg_location
+    location: rg_location
   }
 }

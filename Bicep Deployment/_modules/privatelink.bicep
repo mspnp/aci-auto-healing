@@ -2,11 +2,11 @@
 param privateLinkSubnetId string
 param vnetId string
 param cosmosId string
-param rgLocation string = resourceGroup().location
+param location string = resourceGroup().location
 
 resource cosmosPE 'Microsoft.Network/privateEndpoints@2023-04-01' = {
   name: '${uniqueString(resourceGroup().id)}-pe'
-  location: rgLocation
+  location: location
   properties:{
     privateLinkServiceConnections:[
       {
