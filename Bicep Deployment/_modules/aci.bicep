@@ -1,16 +1,21 @@
 param aciCount int
-param rgLocation string = resourceGroup().location
+param location string = resourceGroup().location
 param prefix string = 'gt'
 param containerImage string
 param acrServerName string
 param acrLoginName string
-param acrPassword string
 param appInsightsKey string
 param networkProfileId string
 
+resource acr 'Microsoft.ContainerRegistry/registries@2023-01-01-preview' existing = {
+  name: acrLoginName
+}
+
+var acrPassword = acr.listCredentials().passwords[0].value
+
 resource aciList 'Microsoft.ContainerInstance/containerGroups@2021-03-01' = [for i in range(0,aciCount):{
   name: '${prefix}aci-${i}'
-  location: rgLocation
+  location: location
   properties: {
     sku: 'Standard'
     imageRegistryCredentials:[

@@ -1,8 +1,9 @@
 param prefix string
+param location string = resourceGroup().location
 
-resource vnet 'Microsoft.Network/virtualNetworks@2021-02-01' = {
+resource vnet 'Microsoft.Network/virtualNetworks@2023-04-01' = {
   name: '${prefix}-vnet'
-  location: resourceGroup().location
+  location: location
   properties:{
     addressSpace:{
       addressPrefixes: [
@@ -12,7 +13,7 @@ resource vnet 'Microsoft.Network/virtualNetworks@2021-02-01' = {
   }
 }
 
-resource appgwSubnet 'Microsoft.Network/virtualNetworks/subnets@2020-11-01' = {
+resource appgwSubnet 'Microsoft.Network/virtualNetworks/subnets@2023-04-01' = {
   parent: vnet
   name: 'appgw-subnet'
   properties: {
@@ -20,7 +21,7 @@ resource appgwSubnet 'Microsoft.Network/virtualNetworks/subnets@2020-11-01' = {
   }
 }
 
-resource aciSubnet 'Microsoft.Network/virtualNetworks/subnets@2020-11-01' = {
+resource aciSubnet 'Microsoft.Network/virtualNetworks/subnets@2023-04-01' = {
   parent: vnet
   name: 'aci-subnet'
   properties: {
@@ -36,7 +37,7 @@ resource aciSubnet 'Microsoft.Network/virtualNetworks/subnets@2020-11-01' = {
   }
 }
 
-resource privatelinkSubnet 'Microsoft.Network/virtualNetworks/subnets@2020-11-01' = {
+resource privatelinkSubnet 'Microsoft.Network/virtualNetworks/subnets@2023-04-01' = {
   parent:vnet
   name: 'privatelink-subnet'
   properties: {
@@ -45,9 +46,9 @@ resource privatelinkSubnet 'Microsoft.Network/virtualNetworks/subnets@2020-11-01
   }
 }
 
-resource aciNetworkProfile 'Microsoft.Network/networkProfiles@2021-02-01' = {
+resource aciNetworkProfile 'Microsoft.Network/networkProfiles@2023-04-01' = {
   name: '${aciSubnet.name}-network-profile'
-  location: resourceGroup().location
+  location: location
   properties:{
     containerNetworkInterfaceConfigurations:[
       {

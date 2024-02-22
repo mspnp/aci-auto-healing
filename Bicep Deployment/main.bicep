@@ -1,13 +1,14 @@
 param deploy_prefix string
 param rg_name string
 param rg_location string
-param aci_count int
+param aci_count int = 1
 param service_principal_id string
+@secure()
 param service_principal_secret string
 
 targetScope = 'subscription'
 
-resource rg 'Microsoft.Resources/resourceGroups@2021-04-01' = {
+resource rg 'Microsoft.Resources/resourceGroups@2022-09-01' = {
   name:'${deploy_prefix}-${rg_name}-RG'
   location: rg_location
 }
@@ -17,6 +18,7 @@ module vnet '_modules/vnet.bicep' = {
   scope: rg
   params:{
     prefix: deploy_prefix
+    location: rg_location
   }
 }
 
@@ -25,12 +27,16 @@ module monitoring '_modules/monitor.bicep' = {
   scope: rg
   params:{
     prefix:deploy_prefix
+    location: rg_location
   }
 }
 
 module acr '_modules/containers.bicep' = {
   name: 'azurecontainerregistry'
   scope: rg
+  params:{
+    location: rg_location
+  }
 }
 
 module aci '_modules/aci.bicep' = {
@@ -43,8 +49,8 @@ module aci '_modules/aci.bicep' = {
     aciCount: aci_count
     acrServerName: acr.outputs.acrServerName
     acrLoginName: acr.outputs.acrLoginName
-    acrPassword: acr.outputs.acrPassword
     containerImage: acr.outputs.container_image
+    location: rg_location
   }
 }
 
@@ -55,6 +61,7 @@ module appgw '_modules/appgw.bicep' = {
     prefix: deploy_prefix
     appgwSubnetId: vnet.outputs.appgwSubnet
     aciIPList: aci.outputs.aciAddress
+    location: rg_location
   }
 }
 
@@ -69,17 +76,20 @@ module functions '_modules/functions.bicep' = {
     appInsightInstrumentationKey: monitoring.outputs.instrumentationKey
     acrServerName: acr.outputs.acrServerName
     acrLoginName: acr.outputs.acrLoginName
-    acrPassword: acr.outputs.acrPassword
     networkProfileName: vnet.outputs.aciNetworkProfileName
     appgw_bepool_name: appgw.outputs.backedPoolName
     appgw_listener_name: appgw.outputs.httpListenerName
     appgw_httpsetting_name: appgw.outputs.backendHttpSetting
+    location: rg_location
   }
 }
 
 module cosmos '_modules/cosmosdb.bicep'= {
   name: 'azurecosmosdb'
   scope: rg
+  params:{
+    location: rg_location
+  }
 }
 
 module privatelink '_modules/privatelink.bicep'={
@@ -89,6 +99,7 @@ module privatelink '_modules/privatelink.bicep'={
     privateLinkSubnetId: vnet.outputs.privatelinkSubnet
     vnetId: vnet.outputs.vnetId
     cosmosId: cosmos.outputs.cosmosId
+    location: rg_location
   }
 }
 
@@ -102,5 +113,6 @@ module alerts '_modules/alerts.bicep'={
     functionHttpUrl: 'https://${functions.outputs.functionUrl}/api/aci_healing_durable_HttpStart'
     healthyThreshold: aci_count - 1
     alertScope: array(appgw.outputs.appGWId)
+    location: rg_location
   }
 }

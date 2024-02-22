@@ -2,10 +2,11 @@
 param privateLinkSubnetId string
 param vnetId string
 param cosmosId string
+param location string = resourceGroup().location
 
-resource cosmosPE 'Microsoft.Network/privateEndpoints@2021-02-01' = {
+resource cosmosPE 'Microsoft.Network/privateEndpoints@2023-04-01' = {
   name: '${uniqueString(resourceGroup().id)}-pe'
-  location: resourceGroup().location
+  location: location
   properties:{
     privateLinkServiceConnections:[
       {
@@ -40,7 +41,7 @@ resource privateDNSZoneLink 'Microsoft.Network/privateDnsZones/virtualNetworkLin
   }
 }
 
-resource privateDNSZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2021-02-01' = {
+resource privateDNSZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2022-05-01' = {
   name: '${cosmosPE.name}/cosmosgroup'
   properties:{
     privateDnsZoneConfigs:[

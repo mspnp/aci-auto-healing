@@ -1,9 +1,9 @@
 param prefix string = 'gt'
-param rgLocation string = resourceGroup().location
+param location string = resourceGroup().location
 
-resource laworkspace 'microsoft.operationalinsights/workspaces@2021-06-01' = {
+resource laworkspace 'microsoft.operationalinsights/workspaces@2022-10-01' = {
   name: '${prefix}-app-workspace'
-  location: rgLocation
+  location: location
   properties: {
     sku: {
       name: 'PerGB2018'
@@ -22,7 +22,7 @@ resource laworkspace 'microsoft.operationalinsights/workspaces@2021-06-01' = {
 
 resource appinsight 'microsoft.insights/components@2020-02-02' = {
   name: uniqueString(resourceGroup().id)
-  location: rgLocation
+  location: location
   kind: 'web'
   properties: {
     Application_Type: 'web'
